@@ -8,7 +8,7 @@
 :root {
   --text-color-primary: #240F4F;
   --text-color-secondary: #8789A3;
-  --card-gradient: linear-gradient(135deg, #269DD8, #DE1D5E);
+  --card-gradient: linear-gradient(155deg, #269DD8, #DE1D5E);
 
   /* linear-gradient(135deg, #DF98FA 0%, #9055FF 100%); */
   --main: #269DD8;
