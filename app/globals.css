@@ -11,11 +11,11 @@
   --card-gradient: linear-gradient(155deg, #269DD8, #DE1D5E);
 
   /* linear-gradient(135deg, #DF98FA 0%, #9055FF 100%); */
-  --main: #269DD8;
+  --main: #71d0ff;
   --secondary: #DE1D5E;
   --overlay: rgba(0, 0, 0, 0.8); /* background color overlay for alert dialogs, modals, etc. */
 
-  --bg: #BDBFC1;
+  --bg: #dcebfe;
   --bw: #fff; /* white and secondary black e.g. utility class variant would be: bg-[#fff] dark:bg-[#212121] */
   --blank: #000; /* blank black and white */
   --border: #000;

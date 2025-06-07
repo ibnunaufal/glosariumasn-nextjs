@@ -18,6 +18,7 @@ import {
   Scroll,
   Sparkles,
   Sun,
+  UploadCloud,
   User,
 } from "lucide-react";
 import moment from "moment";
@@ -42,72 +43,27 @@ import {
 } from "@/components/ui/sheet";
 import { Card, CardContent } from "@/components/ui/card";
 import Hijriah1446 from "./HijriCalendar";
-
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const router = useRouter();
-  const [nextPrayerTime, setNextPrayerTime] = useState("");
-  const [nextPrayerName, setNextPrayerName] = useState("");
-  const [nextPrayer, setNextPrayer] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
-  const [hijriDate, setHijriDate] = useState("");
   const menu = [
     {
-      name: "Mutabaah",
-      href: "/mutabaah",
-      icon: <ListChecks />,
+      name: "Kontribusi",
+      href: "/kontribusi",
+      icon: <UploadCloud />,
     },
-    {
-      name: "InfaQris",
-      href: "/qris",
-      icon: <HandCoins />,
-    },
-    {
-      name: "Quran",
-      href: "/quran",
-      icon: <BookOpenText />,
-    },
-    {
-      name: "Matsurat",
-      href: "/almatsurat",
-      icon: <Sun />,
-    },
-  ];
-
-  const carousels = [
-    {
-      id: 1,
-      title: "Mutabaah",
-      description:
-        "Mutabaah adalah evaluasi yang dilakukan untuk mengukur sejauh mana kita telah melaksanakan kewajiban dan ibadah harian kita sebagai seorang muslim.",
-      href: "/mutabaah",
-      icon: <ListChecks size={54} />,
-    },
-    {
-      id: 2,
-      title: "InfaQris",
-      description:
-        "InfaQris adalah sarana untuk berinfaq dan bersedekah dengan menggunakan QRIS.",
-      href: "/qris",
-      icon: <HandCoins size={54} />,
-    },
-    {
-      id: 3,
-      title: "Quran",
-      description:
-        "Quran adalah kitab suci umat Islam yang diturunkan kepada Nabi Muhammad SAW.",
-      href: "/quran",
-      icon: <BookOpenText size={54} />,
-    },
-    {
-      id: 4,
-      title: "Al-Matsurat",
-      description:
-        "Al-Matsurat adalah kumpulan dzikir pagi dan petang yang disusun oleh Imam Hasan Al-Banna, berisi ayat-ayat Al-Qur’an dan hadits. Dzikir ini dianjurkan untuk diamalkan setiap hari sebagai bentuk mengingat Allah dan memohon perlindungan-Nya.",
-      href: "/almatsurat",
-      icon: <Sun size={54} />,
-    },
+   
   ];
 
   useEffect(() => {
@@ -129,62 +85,30 @@ export default function Home() {
     router.push("/login");
   };
 
-  function getNextPrayer() {
-    let prayerTimes = JadwalSholat[moment().format("yyyy-MM-DD")];
-    // console.log(prayerTimes);
-    if (!prayerTimes) {
-      // console.log("No prayer times found for this date.");
+  const searchButtonClick = () => {
+    if (searchValue.trim() === "") {
+      alert("Please enter a search term.");
+      return;
     }
-    const now = new Date();
-    const currentHours = now.getHours();
-    const currentMinutes = now.getMinutes();
-    const currentTime = currentHours * 60 + currentMinutes; // Convert to total minutes
+    // Redirect to the search page with the search term
+    router.push(`/pencarian/${encodeURIComponent(searchValue.toUpperCase())}`);
+  };
 
-    let nextPrayer = null;
-    let nextPrayerName = "";
-    let minDifference = Infinity;
-    let hourDifference = Infinity;
-    let tempMinute = 0;
-
-    Object.keys(prayerTimes).forEach((prayer) => {
-      if (prayer === "tanggal") return; // Skip the date field
-
-      const [hours, minutes] = prayerTimes[prayer].split(":").map(Number);
-      const prayerTime = hours * 60 + minutes; // Convert to total minutes
-      // console.log(prayerTime, currentTime, prayerTime - currentTime);
-      if (
-        prayerTime > currentTime &&
-        prayerTime - currentTime < minDifference
-      ) {
-        nextPrayer = prayerTimes[prayer];
-        nextPrayerName = prayer;
-        minDifference = prayerTime - currentTime;
-
-        hourDifference = Math.floor(minDifference / 60);
-        tempMinute = (60 * hourDifference - minDifference) * -1;
-
-        if (nextPrayer) {
-          if (hourDifference < 1) {
-            setNextPrayer(`${minDifference} menit lagi`);
-          } else {
-            setNextPrayer(`${hourDifference} jam ${tempMinute} menit`);
-          }
-          // console.log("Next prayer is", nextPrayer, "at", nextPrayerName);
-          setNextPrayerTime(nextPrayer);
-          setNextPrayerName(nextPrayerName);
-        } else {
-          // console.log("No prayer found for today.");
-        }
-      }
-    });
-  }
+   const addButtonClick = () => {
+    if (searchValue.trim() === "") {
+      alert("Please enter a search term.");
+      return;
+    }
+    // Redirect to the search page with the search term
+    router.push(`/kontribusi/${encodeURIComponent(searchValue.toUpperCase())}`);
+  };
 
   return (
     <div>
       {/* top item */}
       <div className="flex justify-between my-5">
         <div className="flex flex-col justify-center">
-          <span className=" text-lg caprasimo">glosarium</span>
+          <span className=" text-lg caprasimo"></span>
         </div>
         <div>
           <Sheet>
@@ -194,7 +118,7 @@ export default function Home() {
             <SheetContent>
               <SheetHeader>
                 <SheetTitle>
-                  <span className=" text-lg caprasimo">glosarium</span>
+                  <span className=" text-lg">GlosariumASN</span>
                 </SheetTitle>
               </SheetHeader>
               <div className="grid gap-4 py-4">
@@ -221,11 +145,11 @@ export default function Home() {
                     <hr className="w-full my-5" />
                     <Button
                       onClick={() => {
-                        router.push("/contribute");
+                        router.push("/profile");
                       }}
                       className="bg-white w-full mb-4"
                     >
-                      Upload QRIS
+                      Profile
                     </Button>
                     <hr className="w-full mt-5" />
                     <Button className="mt-5" onClick={handleLogout}>
@@ -250,221 +174,144 @@ export default function Home() {
       {/* welcome section */}
       <div className=" flex items-center rounded-md my-10">
         <div>
-          {user ? (
-            <Avatar>
-              <AvatarImage src={user.photoURL} />
-              <AvatarFallback>
-                {String(user.displayName).substring(0, 3)}
-              </AvatarFallback>
-            </Avatar>
-          ) : (
-            <Avatar>
-              <AvatarFallback>
-                <User />
-              </AvatarFallback>
-            </Avatar>
-          )}
-        </div>
-        <div className="ml-3">
-          <h6 className=" text-sm font-normal">Assalamualaikum 👋</h6>
-          {user ? (
-            <h2 className=" text-md font-bold">{user.displayName}</h2>
-          ) : (
-            <div>
-              <h2 className=" text-md font-bold">Selamat datang</h2>
-              <span className=" text-sm">Silahkan login untuk melanjutkan</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* date and fill today's mutabaah */}
-      <div className="bg-white p-4 rounded-base border-2 border-black flex mb-4 items-center">
-        <div className="w-full">
-          <h2 className="text-md font-bold mb-1">
-            {moment().locale("id").format("dddd, D MMM YYYY")}
-          </h2>
-          <h2 className="text-sm mb-1">
-            {Hijriah1446.map((item) => {
-              if (item.gregorian === moment().format("DD-MM-YYYY")) {
-                return <span key={item.hijri}>{item.hijri}</span>;
-              }
-            })}
-          </h2>
-        </div>
-        <div className="flex flex-col items-center">
-        <Button
-          onClick={() => {
-            router.push(`/mutabaah/${moment().format("yyyy-MM-DD")}`);
-          }}
-          className="text-xs"
-        >
-          Isi mutabaah hari ini
-        </Button>
-        <a href="#insight" className="mt-2">
-        <span className="text-xs underline">Apa itu mutabaah?</span>
-        </a>
-        </div>
-      </div>
-      {nextPrayerTime && (
-        <div>
-          <div className="flex items-center w-full justify-between bg-bg px-2 pt-2 border-black border-2 rounded-r-base rounded-t-base">
-          <div className="flex flex-col">
-            <span className="text-xs">Waktu solat terdekat</span>
-            <span>
-              {nextPrayerName.toUpperCase()} at {nextPrayerTime}
+          <h6 className=" text-sm font-normal">Selamat Datang di </h6>
+          <div>
+            <h2 className=" text-2xl font-bold">GlosariumASN 👋</h2>
+            <span className=" text-sm">
+              Aplikasi daftar istilah yang sering digunakan dalam lingkungan ASN
             </span>
-            <span className="text-xs">{nextPrayer}</span>
           </div>
+        </div>
+        <div className="ml-4">
           <Image
-            src={`/ic_${nextPrayerName}.svg`}
-            alt={`/ic_${nextPrayerName}.svg`}
-            width={50}
-            height={50}
-            className=""
-          />
-          <Image
-            src={`/ic_mosque.svg`}
-            alt={`/ic_mosque.svg`}
+            src="/logo.png"
+            alt="Glosarium ASN Logo"
             width={100}
             height={100}
-            className=""
+            className="rounded-md"
           />
         </div>
-        <span className="text-sm py-1 border-b-2 border-r-2 border-l-2 rounded-b-base w-fit px-2 pb-1 flex items-center"> <MapPinned size={18} className="mr-2" /> Kota Semarang</span>
-        </div>
-      )}
-
-      {/* menu */}
-      <div className="my-5 bg-card-gradient rounded-md border-2">
-        <div className="w-fit py-1 pl-2 flex items-center font-bold">Menu</div>
-        <div className="p-1">
-          <div className="grid grid-cols-2 md:grid-cols-4">
-            {menu.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="
-            flex flex-col items-center justify-center bg-bg p-2 m-2 rounded-md
-            border-2 border-black
-            "
-              >
-                {item.icon}
-                <span className="text-sm mt-1">{item.name}</span>
-              </a>
-            ))}
-          </div>
-          <div className="w-full py-1 px-2 my-2 bg-bg rounded-md border-2 flex items-center" onClick={() => router.push("/tasbih")}>
-            <Sparkles size={16} />
-            <span className="ml-2 text-sm">Cobain fitur baru, <span className="underline">tasbih digital</span></span>
-          </div>
-        </div>
       </div>
 
-      {/* insight */}
-      <div className="my-5" id="insight">
-        <div className="w-fit py-1 flex items-center font-bold">
-          Insight
+      <Card className="p-6 min-w-[300px] bg-bg mb-2">
+        {/* <span className=" flex justify-center caprasimo text-4xl my-5">
+          glosarium
+        </span> */}
+        <div className="flex items-center justify-between"></div>
+        <h1 className="text-xl font-bold">Pencarian</h1>
+
+        <span className="text-sm text-gray-600">
+          Masukkan kata kunci untuk mencari istilah yang Anda butuhkan.
+        </span>
+
+        <div>
+          <Input
+            type="text"
+            placeholder="Cari istilah..."
+            className="mt-4"
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+          />
+          <div>
+            <Button className="mt-3" onClick={searchButtonClick}>
+              Cari
+            </Button>
+          </div>
         </div>
-      </div>
-      <Carousel className="p-1">
-        <CarouselContent>
-          {carousels.map((c) => (
-            <CarouselItem key={c.id}>
-              <div
-                key={c.title}
-                className="bg-white text-background w-fit min-w-64 min-h-56 mx-2 p-2 rounded-md border-2 border-black flex flex-col items-center"
-              >
-                <div className="w-48 h-24 flex items-center justify-center">
-                  {c.icon}
-                </div>
-                <div className="text-xl font-caprasimo ">{c.title}</div>
-                <div className="text-xs text-center">{c.description}</div>
-              </div>
-              <div className="flex justify-center">
-                {/* indicator */}
-                {
-                  <div className="flex mt-2">
-                    {carousels.map((_, index) => (
-                      <div
-                        key={index}
-                        className={`w-2 h-2 mx-1 rounded-full bg-background ${
-                          index === c.id - 1 ? "bg-main" : "bg-black"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                }
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-      <CarouselNext />
-      </Carousel>
+      </Card>
 
       {/* app explanation */}
       <div className="my-5">
-        <div className="w-fit bg-card-gradient py-1 px-5 border-black border-t-2 border-x-2 rounded-t-base flex items-center font-bold">
+        <div className="w-fit bg-card-primary py-1 px-5 border-black border-t-2 border-x-2 rounded-t-base flex items-center font-bold">
           <Lightbulb className="mr-2 w-5 h-5" />
           Apa itu Glosarium?
         </div>
         <div className="bg-bg p-4 rounded-r-base rounded-b-base border-2 border-black">
           <p className="text-sm text-justify">
-            Glosarium (dibaca Yaumi) berasal dari istilah Mutaba’ah Yaumiyyah, yang
-            berarti evaluasi amal harian—baik yang wajib maupun sunnah. Dengan
-            Glosarium, Anda dapat merefleksikan ibadah harian dan lebih mudah
-            mengamati perkembangan spiritual Anda. Aplikasi ini hadir sebagai
-            sahabat dalam perjalanan meningkatkan kualitas iman, membantu Anda
-            lebih konsisten dalam beribadah, dan mendekatkan diri kepada Allah.
-            Mari jadikan setiap hari lebih bermakna dengan Glosarium!
+            GlosariumASN adalah aplikasi yang menyediakan daftar istilah yang
+            sering digunakan dalam lingkungan ASN (Aparatur Sipil Negara).
+            Aplikasi ini bertujuan untuk membantu ASN memahami istilah-istilah
+            yang mungkin belum familiar, sehingga dapat meningkatkan pemahaman
+            dan kinerja dalam tugas-tugas mereka.
           </p>
         </div>
       </div>
 
       {/* contribute */}
       <div className="my-5">
-        <div className="w-fit bg-card-gradient py-1 px-5 border-black border-t-2 border-x-2 rounded-t-base flex items-center font-bold">
+        <div className="w-fit py-1 px-5 border-black border-t-2 border-x-2 rounded-t-base flex items-center font-bold">
           <NotebookPen className="mr-2 w-5 h-5" />
           Contribute
         </div>
         <div className="bg-bg p-4 rounded-r-base rounded-b-base border-2 border-black">
           <p className="text-sm text-justify">
-            Unggah QRIS infaq yang anda temui atau miliki, dengan begitu orang
-            lain akan berinfaq lalu anda akan berpotensi mendapat pahala
-            jariyah!😉{" "}
+            Ikut berkontribusi dengan menambahkan kata, istilah, atau singkatan
+            beserta dengan definisinya agar dapat diketahui oleh masyarakat
+            luas. 😉{" "}
           </p>
-          <br/>
-          <Button
-            className="mt-2"
-            onClick={() => {
-              router.push("/contribute");
-            }}
-          >
-            <CloudUpload className="mr-1 w-5 h-5" />
-            Unggah QRIS
-          </Button>
+          <br />
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="mt-2">
+                <CloudUpload className="mr-1 w-5 h-5" />
+                Berkontribusi
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogTitle className="text-md font-bold">
+                Berkontribusi
+              </DialogTitle>
+              {
+                // if logged in, show the form to contribute
+                user ? (
+                  <div className="items-center">
+                    <span className="text-sm text-gray-600">
+                      Masukkan kata, istilah, atau singkatan yang ingin ditambahkan.
+                    </span>
+
+                    <div>
+                      <Input
+                        type="search"
+                        placeholder="Masukkan istilah..."
+                        className="mt-4"
+                        onChange={(e) => {
+                          setSearchValue(e.target.value);
+                        }}
+                      />
+                      <div>
+                        <Button className="mt-3" onClick={addButtonClick}>
+                          Tambahkan
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-gray-600 mt-4">
+                      Anda dapat menambahkan detail istilah, singkatan, atau kata baru
+                      beserta definisinya setelah menekan tombol "Tambahkan".
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center">
+                    <h2 className="text-lg font-bold mb-4">
+                      Silakan login untuk berkontribusi
+                    </h2>
+                    <Button
+                      onClick={() => {
+                        router.push("/login");
+                      }}
+                    >
+                      Login
+                    </Button>
+                  </div>
+                )
+              }
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      {/* <div className="bg-foreground my-5 rounded-md min-h-56">calendar</div>
-  <div className="bg-foreground my-5 rounded-md">calendar</div>
-
-  <div className="flex flex-col items-center justify-center">
-    <h1 className="text-2xl font-bold">Welcome, {user.displayName}</h1>
-    <a
-      href="/profile"
-      className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
-    >
-      Go to Profile
-    </a>
-    <button
-      onClick={handleLogout}
-      className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
-    >
-      Logout
-    </button>
-  </div> */}
+      <Footer />
     </div>
   );
 }

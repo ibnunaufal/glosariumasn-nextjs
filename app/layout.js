@@ -4,6 +4,7 @@ import Logo from "@/components/Logo";
 import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script";
 import ConditionalAnalytics from "./Analytics";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
