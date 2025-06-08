@@ -11,11 +11,13 @@ import {
   HandCoins,
   Lightbulb,
   ListChecks,
+  LogOut,
   MapPinned,
   Menu,
   MessageCircleQuestion,
   NotebookPen,
   Scroll,
+  Search,
   Sparkles,
   Sun,
   UploadCloud,
@@ -51,6 +53,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Footer from "@/components/Footer";
+import SearchCard from "@/components/SearchCard";
+import ContributionWithDialog from "@/components/ContributionWithDialog";
+import ContributionDialogButton from "@/components/ContributionDialogButton";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -94,14 +99,7 @@ export default function Home() {
     router.push(`/pencarian/${encodeURIComponent(searchValue.toUpperCase())}`);
   };
 
-   const addButtonClick = () => {
-    if (searchValue.trim() === "") {
-      alert("Please enter a search term.");
-      return;
-    }
-    // Redirect to the search page with the search term
-    router.push(`/kontribusi/${encodeURIComponent(searchValue.toUpperCase())}`);
-  };
+   
 
   return (
     <div>
@@ -131,28 +129,29 @@ export default function Home() {
                       </AvatarFallback>
                     </Avatar>
                     <span className=" text-sm mb-4">{user.displayName}</span>
-                    {menu.map((item) => (
-                      <Button
-                        key={item.name}
+                    <Button
                         onClick={() => {
-                          router.push(item.href);
+                          router.push("/pencarian");
                         }}
-                        className="bg-bg w-full mb-4"
+                        className=" w-full mb-4"
                       >
-                        {item.name}
+                        <Search className="mr-2 w-5 h-5" />
+                        Pencarian
                       </Button>
-                    ))}
+                    <ContributionDialogButton user={user} />
                     <hr className="w-full my-5" />
                     <Button
                       onClick={() => {
                         router.push("/profile");
                       }}
-                      className="bg-white w-full mb-4"
+                      className=" w-full mb-4"
                     >
+                      <User className="mr-2 w-5 h-5" />
                       Profile
                     </Button>
                     <hr className="w-full mt-5" />
                     <Button className="mt-5" onClick={handleLogout}>
+                      <LogOut className="mr-2 w-5 h-5" />
                       Logout
                     </Button>
                   </div>
@@ -193,33 +192,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Card className="p-6 min-w-[300px] bg-bg mb-2">
-        {/* <span className=" flex justify-center caprasimo text-4xl my-5">
-          glosarium
-        </span> */}
-        <div className="flex items-center justify-between"></div>
-        <h1 className="text-xl font-bold">Pencarian</h1>
-
-        <span className="text-sm text-gray-600">
-          Masukkan kata kunci untuk mencari istilah yang Anda butuhkan.
-        </span>
-
-        <div>
-          <Input
-            type="text"
-            placeholder="Cari istilah..."
-            className="mt-4"
-            onChange={(e) => {
-              setSearchValue(e.target.value);
-            }}
-          />
-          <div>
-            <Button className="mt-3" onClick={searchButtonClick}>
-              Cari
-            </Button>
-          </div>
-        </div>
-      </Card>
+     <SearchCard />
 
       {/* app explanation */}
       <div className="my-5">
@@ -239,77 +212,7 @@ export default function Home() {
       </div>
 
       {/* contribute */}
-      <div className="my-5">
-        <div className="w-fit py-1 px-5 border-black border-t-2 border-x-2 rounded-t-base flex items-center font-bold">
-          <NotebookPen className="mr-2 w-5 h-5" />
-          Contribute
-        </div>
-        <div className="bg-bg p-4 rounded-r-base rounded-b-base border-2 border-black">
-          <p className="text-sm text-justify">
-            Ikut berkontribusi dengan menambahkan kata, istilah, atau singkatan
-            beserta dengan definisinya agar dapat diketahui oleh masyarakat
-            luas. 😉{" "}
-          </p>
-          <br />
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="mt-2">
-                <CloudUpload className="mr-1 w-5 h-5" />
-                Berkontribusi
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogTitle className="text-md font-bold">
-                Berkontribusi
-              </DialogTitle>
-              {
-                // if logged in, show the form to contribute
-                user ? (
-                  <div className="items-center">
-                    <span className="text-sm text-gray-600">
-                      Masukkan kata, istilah, atau singkatan yang ingin ditambahkan.
-                    </span>
-
-                    <div>
-                      <Input
-                        type="search"
-                        placeholder="Masukkan istilah..."
-                        className="mt-4"
-                        onChange={(e) => {
-                          setSearchValue(e.target.value);
-                        }}
-                      />
-                      <div>
-                        <Button className="mt-3" onClick={addButtonClick}>
-                          Tambahkan
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-gray-600 mt-4">
-                      Anda dapat menambahkan detail istilah, singkatan, atau kata baru
-                      beserta definisinya setelah menekan tombol "Tambahkan".
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <h2 className="text-lg font-bold mb-4">
-                      Silakan login untuk berkontribusi
-                    </h2>
-                    <Button
-                      onClick={() => {
-                        router.push("/login");
-                      }}
-                    >
-                      Login
-                    </Button>
-                  </div>
-                )
-              }
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+      <ContributionWithDialog user={user} />
 
       <Footer />
     </div>

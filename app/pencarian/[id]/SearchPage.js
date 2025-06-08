@@ -1,4 +1,5 @@
 "use client";
+import ContributionCard from "@/components/ContributionCard";
 import Footer from "@/components/Footer";
 import HeadComponent from "@/components/HeadComponent";
 import {
@@ -14,14 +15,29 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { auth } from "@/utils/auth";
 import db from "@/utils/firestore";
 import { collection, doc, getDoc, getDocs } from "@firebase/firestore";
 import { Accordion, AccordionHeader } from "@radix-ui/react-accordion";
-import { CloudUpload, NotebookPen } from "lucide-react";
+import { CloudUpload, Link, NotebookPen, Share } from "lucide-react";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
 
 export default function SearchPage({ id }) {
   const router = useRouter();
@@ -79,11 +95,13 @@ export default function SearchPage({ id }) {
   const addButtonClick = () => {
     // Redirect to the search page with the search term
     if (!user) {
-      router.push("/login?message=Silahkan login dahulu&redirect=https://localhost:3000/kontribusi/" + id);
+      router.push(
+        "/login?message=Silahkan login dahulu&redirect=kontribusi/" +
+          id
+      );
     } else {
       router.push("/kontribusi/" + id);
     }
-    
   };
   return (
     <div className="h-screen py-2">
@@ -128,27 +146,55 @@ export default function SearchPage({ id }) {
         <p className="text-gray-500">Tidak ada hasil ditemukan.</p>
       )}
 
-      {/* contribute */}
-      <div className="my-5">
-        <div className="w-fit bg-card-main py-1 px-5 border-black border-t-2 border-x-2 rounded-t-base flex items-center font-bold">
-          <NotebookPen className="mr-2 w-5 h-5" />
-          Contribute
-        </div>
-        <div className="bg-bg p-4 rounded-r-base rounded-b-base border-2 border-black">
-          <p className="text-sm text-justify">
-            Ingin menambahkan keterangan lainnya? Klik tombol "Berkontribusi" di
-            bawah ini untuk menambahkan istilah, singkatan, atau kata baru
-            beserta definisinya. Anda harus login terlebih dahulu untuk
-            berkontribusi.
-          </p>
-          <br />
-
-          <Button className="mt-2" onClick={addButtonClick}>
-            <CloudUpload className="mr-1 w-5 h-5" />
-            Berkontribusi
-          </Button>
-        </div>
+      <div className=" text-center items-center mt-4">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="neutral" className="mt-2">
+              <Share size={24} />
+              Bagikan Halaman Ini
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div>
+              <span className="flex justify-center mb-2">Bagikan melalui</span>
+              <div className="flex justify-evenly p-1">
+                <WhatsappShareButton
+                  url={`https://yaw.my.id/qris/${id}`}
+                  title={`${id}`}
+                >
+                  <WhatsappIcon size={24} />
+                </WhatsappShareButton>
+                <TelegramShareButton
+                  url={`https://yaw.my.id/qris/${id}`}
+                  title={`${id}`}
+                >
+                  <TelegramIcon size={24} />
+                </TelegramShareButton>
+                <FacebookShareButton
+                  url={`https://yaw.my.id/qris/${id}`}
+                  quote={`${id}`}
+                >
+                  <FacebookIcon size={24} />
+                </FacebookShareButton>
+                <TwitterShareButton
+                  url={`https://yaw.my.id/qris/${id}`}
+                  title={`${id}`}
+                >
+                  <TwitterIcon size={24} />
+                </TwitterShareButton>
+              </div>
+              <span className="flex justify-center mb-2">Atau</span>
+              <Button className="w-full bg-white">
+                <Link size={24} />
+                Salin link
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
+
+      {/* contribute */}
+      <ContributionCard id={id} />
       <Footer />
     </div>
   );

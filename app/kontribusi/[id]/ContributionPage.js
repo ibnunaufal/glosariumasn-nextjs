@@ -149,6 +149,12 @@ export default function ContributionPage({ id }) {
         await setDoc(userRef, { contribution_count: 1 });
       }
 
+      // add word to list
+      let firstChar = String(id).toUpperCase().charAt(0);
+      const listRef = collection(db, "list", String(firstChar).toUpperCase(), "content");
+      await addDoc(listRef, {
+        word: String(id).toUpperCase(),
+      });
       // go to page 'pencarian/{id}'
       window.location.href = `/pencarian/${String(id).toUpperCase()}`;
     } catch (error) {

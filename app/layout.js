@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script";
 import ConditionalAnalytics from "./Analytics";
 import Footer from "@/components/Footer";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,6 +64,17 @@ export default function RootLayout({ children }) {
       >
         <div className="antialiased max-w-lg mx-4 my-0 flex flex-col md:flex-row lg:mx-auto">
           <div className="flex-auto min-w-0 flex flex-col px-2 md:px-0">
+            <NextTopLoader
+              color="#dd2222"
+              initialPosition={0.08}
+              crawlSpeed={200}
+              height={13}
+              crawl={true}
+              showSpinner={true}
+              easing="ease"
+              speed={200}
+              shadow="0 0 10px #dd2222,0 0 5px #dd2222"
+            />
             {children}
             {/* <div className="rounded-t-2xl bg-card-gradient p-4 shadow-md shadow-foreground/20">
               <span className="text-xs text-black">
