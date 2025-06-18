@@ -8,7 +8,26 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { auth } from "@/utils/auth";
 import db from "@/utils/firestore";
@@ -21,6 +40,7 @@ import {
   setDoc,
 } from "@firebase/firestore";
 import { Accordion, AccordionHeader } from "@radix-ui/react-accordion";
+import { CircleX, X } from "lucide-react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
@@ -28,6 +48,12 @@ export default function ContributionPage({ id }) {
   const [definitionList, setDefinitionList] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState("");
+  const [legalSources, setLegalSources] = useState([]);
+  const [newLegalSourceType, setNewLegalSourceType] = useState("");
+  const [newLegalSourceNumber, setNewLegalSourceNumber] = useState("");
+  const [newLegalSourceYear, setNewLegalSourceYear] = useState("");
 
   const [definition, setDefinition] = useState({
     abbreviation: "",
@@ -144,14 +170,23 @@ export default function ContributionPage({ id }) {
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
         const contributionCount = (userDoc.data().contribution_count || 0) + 1;
-        await setDoc(userRef, { contribution_count: contributionCount }, { merge: true });
+        await setDoc(
+          userRef,
+          { contribution_count: contributionCount },
+          { merge: true }
+        );
       } else {
         await setDoc(userRef, { contribution_count: 1 });
       }
 
       // add word to list
       let firstChar = String(id).toUpperCase().charAt(0);
-      const listRef = collection(db, "list", String(firstChar).toUpperCase(), "content");
+      const listRef = collection(
+        db,
+        "list",
+        String(firstChar).toUpperCase(),
+        "content"
+      );
       await addDoc(listRef, {
         word: String(id).toUpperCase(),
       });
@@ -162,13 +197,34 @@ export default function ContributionPage({ id }) {
     }
   };
 
+  const addTag = (tag) => {
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
+  };
+  const removeTag = (tag) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+
+  const addLegalSource = (source) => {
+    if (source && !legalSources.includes(source)) {
+      setLegalSources([...legalSources, source]);
+    }
+  };
+  const removeLegalSource = (source) => {
+    setLegalSources(legalSources.filter((s) => s !== source));
+  };
+
   return (
     <div className="h-screen py-2">
       <HeadComponent title={`Kontribusi`} />
 
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Berkontribusi</h1>
-        <p className=" mb-1">Ikut berkontribusi dengan menambahkan keterangan pada kata di bawah ini</p>
+        <p className=" mb-1">
+          Ikut berkontribusi dengan menambahkan keterangan pada kata di bawah
+          ini
+        </p>
       </div>
 
       <Card className="w-full mt-4 mb-8 bg-bg">
@@ -179,10 +235,8 @@ export default function ContributionPage({ id }) {
         </CardHeader>
         <CardContent>
           <form className="space-y-4">
-             <div>
-              <label className="block text-sm font-medium mb-1">
-                Kosakata
-              </label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Kosakata</label>
               <Input
                 type="text"
                 disabled
@@ -221,6 +275,185 @@ export default function ContributionPage({ id }) {
                 placeholder="Masukkan definisi"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Tag atau Kata Kunci Relevan Lainnya
+              </label>
+              <div className="flex">
+                <Input
+                  type="text"
+                  value={newTag}
+                  onInput={(e) =>
+                    (e.target.value = ("" + e.target.value).toUpperCase())
+                  }
+                  onChange={(e) => setNewTag(e.target.value)}
+                  className="mr-1"
+                  placeholder="Masukkan tag"
+                />
+                <Button
+                  type="button"
+                  variant="reverse"
+                  className="ml-1 reversed"
+                  onClick={() => {
+                    addTag(newTag);
+                    setNewTag("");
+                  }}
+                >
+                  Tambah Tag
+                </Button>
+              </div>
+              <div className="mt-2">
+                {tags.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag, index) => (
+                      <div
+                        key={index}
+                        className="flex border items-center bg-blue-200 px-2 rounded-2xl"
+                      >
+                        {tag}
+                        <X
+                          className="ml-2 w-4 text-red-500 cursor-pointer"
+                          onClick={() => removeTag(tag)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">
+                    Tidak ada tag yang ditambahkan.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Sumber Hukum atau Referensi
+              </label>
+              <div className="flex">
+                <div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="reverse" className="mr-1">
+                        Tambah Sumber Hukum
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Tambah Sumber Hukum</DialogTitle>
+                        <DialogDescription>
+                          Sumber hukum atau referensi yang relevan.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <Label htmlFor="legal-source-select">
+                        Pilih Jenis Peraturan
+                      </Label>
+                      <Select id="legal-source-select">
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Pilih Jenis Peraturan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Jenis Peraturan</SelectLabel>
+                            <SelectItem value="uu">Undang-Undang</SelectItem>
+                            <SelectItem value="pp">
+                              Peraturan Pemerintah
+                            </SelectItem>
+                            <SelectItem value="perpres">
+                              Peraturan Presiden
+                            </SelectItem>
+                            <SelectItem value="permenpan">
+                              Peraturan Menteri PAN RB
+                            </SelectItem>
+                            <SelectItem value="perka">
+                              Peraturan Kepala BKN
+                            </SelectItem>
+                            <SelectItem value="permen">
+                              Peraturan Menteri
+                            </SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+
+                      <div className="flex justify-between gap-2">
+                        <div className="w-full">
+                          <Label htmlFor="legal-source-number">Nomor</Label>
+                          <Input
+                            id="legal-source-number"
+                            type="number"
+                            min="1"
+                            max="9999999999"
+                            value={newLegalSourceNumber}
+                            onChange={(e) =>
+                              setNewLegalSourceNumber(e.target.value)
+                            }
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="w-full">
+                          <Label htmlFor="legal-source-year" className="mt-2">
+                            Tahun
+                          </Label>
+                          <Input
+                            id="legal-source-year"
+                            type="number"
+                            value={newLegalSourceYear}
+                            onChange={(e) =>
+                              setNewLegalSourceYear(e.target.value)
+                            }
+                            min="1900"
+                            max={new Date().getFullYear()}
+                            className="w-full"
+                          />
+                        </div>
+                      </div>
+
+                      <DialogClose asChild>
+                        <div className="flex justify-center mt-4 gap-2">
+                          <Button
+                            variant="neutral"
+                            onClick={() => {
+                              alert("tutup");
+                            }}
+                          >
+                            Batal
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              alert("tutup");
+                            }}
+                          >
+                            Simpan
+                          </Button>
+                        </div>
+                      </DialogClose>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+              <div className="mt-2">
+                {legalSources.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {legalSources.map((source, index) => (
+                      <div
+                        key={index}
+                        className="flex border items-center bg-blue-200 px-2 rounded-2xl"
+                      >
+                        {source}
+                        <X
+                          className="ml-2 w-4 text-red-500 cursor-pointer"
+                          onClick={() => removeLegalSource(source)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">
+                    Tidak ada sumber yang ditambahkan.
+                  </p>
+                )}
+              </div>
+            </div>
             <Button
               type="button"
               className="hover:bg-blue-700"
@@ -228,7 +461,7 @@ export default function ContributionPage({ id }) {
                 addDefinition();
               }}
             >
-              Tambah Definisi Baru
+              Simpan
             </Button>
           </form>
         </CardContent>
@@ -272,6 +505,5 @@ export default function ContributionPage({ id }) {
       )}
       <Footer />
     </div>
-
   );
 }

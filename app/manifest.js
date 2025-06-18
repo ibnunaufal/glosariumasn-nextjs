@@ -1,8 +1,8 @@
 export default function manifest() {
     return {
-      name: 'Glosarium',
-      short_name: 'Glosarium',
-      description: 'Glosarium is a platform for managing your daily activities.',
+      name: 'GlosariumASN',
+      short_name: 'GlosariumASN',
+      description: 'GlosariumASN is a platform for searching definitions.',
       start_url: '/',
       display: 'standalone',
       background_color: '#FFF4E0',

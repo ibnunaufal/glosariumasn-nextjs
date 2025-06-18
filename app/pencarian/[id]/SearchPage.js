@@ -103,15 +103,23 @@ export default function SearchPage({ id }) {
       router.push("/kontribusi/" + id);
     }
   };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`https://glosariumasn.naufall.com/pencarian/${id}`);
+    alert("Link telah disalin ke clipboard!");
+  };
   return (
     <div className="h-screen py-2">
-      <HeadComponent title={`Pencarian`} />
+      <HeadComponent title={`Hasil Pencarian`} />
 
       <div className="mb-4">
         <p className=" mb-1">Berikut hasil Pencarian untuk kata</p>
         <h1 className="text-2xl font-bold">{id}</h1>
       </div>
 
+      <div className="flex justify-between items-center mb-2 mt-4">
+        Definisi kata "{id}" yang ditemukan:
+      </div>
       {definitionList.length > 0 ? (
         <div key={id} className="w-full">
           <Accordion
@@ -184,7 +192,7 @@ export default function SearchPage({ id }) {
                 </TwitterShareButton>
               </div>
               <span className="flex justify-center mb-2">Atau</span>
-              <Button className="w-full bg-white">
+              <Button className="w-full bg-white" onClick={handleCopyLink}>
                 <Link size={24} />
                 Salin link
               </Button>
